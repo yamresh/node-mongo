@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const fileupload = require("express-fileupload");
 const Post = require("./database/modals/Post");
+const validateDate = require("./middleware/validateDate");
 const app = express();
 const PORT = 3000;
 const mongooseString =
@@ -16,6 +17,8 @@ app.use(fileupload());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("views", `${__dirname}/views`);
 mongoose.connect(mongooseString);
+
+app.use("/posts/store", validateDate);
 
 app.get("/", async (req, res) => {
   const posts = await Post.find({});

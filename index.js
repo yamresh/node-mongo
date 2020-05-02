@@ -9,14 +9,16 @@ const fileupload = require("express-fileupload");
 const morgan = require("morgan");
 
 const Post = require("./database/modals/Post");
+// Pages
 const validateDate = require("./middleware/validateDate");
 const createPostController = require("./controllers/createPost");
 const homePageController = require("./controllers/homePage");
 const aboutPageController = require("./controllers/aboutPage");
 const contactPageController = require("./controllers/contactPage");
-
 const storePostController = require("./controllers/storePost");
 const getPostController = require("./controllers/getPost");
+const registerController = require("./controllers/registerPage");
+const storeUserController = require("./controllers/storeUser");
 
 const app = express();
 const PORT = 3000;
@@ -52,6 +54,10 @@ app.get("/post/:id", getPostController);
 app.get("/posts/new", createPostController);
 
 app.post("/posts/store", storePostController);
+
+app.get("/user/register", registerController);
+
+app.post("/user/register", storeUserController);
 
 app.listen(PORT, () => {
   console.log(`Server is running on PORT ${PORT}`);

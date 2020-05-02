@@ -1,2 +1,4 @@
 /node_modules/
 /ui/
+access.log
+.DS_Store

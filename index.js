@@ -1,11 +1,23 @@
 const express = require("express");
 const { config, engine } = require("express-edge");
 const path = require("path");
+const fs = require("fs");
+
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const fileupload = require("express-fileupload");
+const morgan = require("morgan");
+
 const Post = require("./database/modals/Post");
 const validateDate = require("./middleware/validateDate");
+const createPostController = require("./controllers/createPost");
+const homePageController = require("./controllers/homePage");
+const aboutPageController = require("./controllers/aboutPage");
+const contactPageController = require("./controllers/contactPage");
+
+const storePostController = require("./controllers/storePost");
+const getPostController = require("./controllers/getPost");
+
 const app = express();
 const PORT = 3000;
 const mongooseString =
@@ -18,55 +30,28 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.set("views", `${__dirname}/views`);
 mongoose.connect(mongooseString);
 
+// Logger
+// create a write stream (in append mode)
+var accessLogStream = fs.createWriteStream(path.join(__dirname, "access.log"), {
+  flags: "a",
+});
+
+// setup the logger
+app.use(morgan("combined", { stream: accessLogStream }));
+
 app.use("/posts/store", validateDate);
 
-app.get("/", async (req, res) => {
-  const posts = await Post.find({});
-  console.log("posts", posts);
-  res.render("index", {
-    posts: posts,
-  });
-});
+app.get("/", homePageController);
 
-app.get("/about", (req, res) => {
-  res.render("about");
-});
+app.get("/about", aboutPageController);
 
-app.get("/contact", (req, res) => {
-  res.render("contact");
-});
+app.get("/contact", contactPageController);
 
-app.get("/post/:id", async (req, res) => {
-  console.log("--- ", req.params.id);
-  const post = await Post.findById(req.params.id);
-  console.log("posts", post);
-  res.render("post", {
-    post: post,
-  });
-});
+app.get("/post/:id", getPostController);
 
-app.get("/posts/new", (req, res) => {
-  res.render("create");
-});
+app.get("/posts/new", createPostController);
 
-app.post("/posts/store", (req, res) => {
-  const { image } = req.files;
-  image.mv(path.resolve(__dirname, "public/posts", image.name), () => {
-    Post.create(
-      {
-        ...req.body,
-        image: `/posts/${image.name}`,
-      },
-      (err, post) => {
-        if (err) {
-          res.send(" there is some error in data saving");
-          res.statusCode = 400;
-        }
-        res.redirect("/");
-      }
-    );
-  });
-});
+app.post("/posts/store", storePostController);
 
 app.listen(PORT, () => {
   console.log(`Server is running on PORT ${PORT}`);

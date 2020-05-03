@@ -1,6 +1,5 @@
 module.exports = (req, res) => {
-  console.log(" Login poage ", req.session);
-  const errList = req.session.errorRegisterList;
+  const errList = req.flash("errorRegisterList");
   res.render("login", {
     errors: errList,
   });

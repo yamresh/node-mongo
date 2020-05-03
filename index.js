@@ -9,6 +9,7 @@ const fileupload = require("express-fileupload");
 const morgan = require("morgan");
 const expressSession = require("express-session");
 const connectMongo = require("connect-mongo");
+const connectFlash = require("connect-flash");
 const Post = require("./database/modals/Post");
 
 // Pages
@@ -50,6 +51,7 @@ app.use(
   })
 );
 
+app.use(connectFlash());
 // Logger
 // create a write stream (in append mode)
 var accessLogStream = fs.createWriteStream(path.join(__dirname, "access.log"), {

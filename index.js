@@ -8,7 +8,9 @@ const bodyParser = require("body-parser");
 const fileupload = require("express-fileupload");
 const morgan = require("morgan");
 const expressSession = require("express-session");
+const connectMongo = require("connect-mongo");
 const Post = require("./database/modals/Post");
+
 // Pages
 const validateDate = require("./middleware/validateDate");
 const createPostController = require("./controllers/createPost");
@@ -22,6 +24,8 @@ const storeUserController = require("./controllers/storeUser");
 const loginPageController = require("./controllers/loginPage");
 const loginUserController = require("./controllers/storeLogin");
 
+const auth = require("./middleware/auth");
+
 const app = express();
 const PORT = 3000;
 const mongooseString =
@@ -32,12 +36,19 @@ app.use(bodyParser.json());
 app.use(fileupload());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("views", `${__dirname}/views`);
+const mongoStore = connectMongo(expressSession);
+mongoose.connect(mongooseString, () => {
+  console.log("========== Connected to Mongo db server");
+});
+
 app.use(
   expressSession({
     secret: "secret",
+    store: new mongoStore({
+      mongooseConnection: mongoose.connection,
+    }),
   })
 );
-mongoose.connect(mongooseString);
 
 // Logger
 // create a write stream (in append mode)
@@ -58,9 +69,9 @@ app.get("/contact", contactPageController);
 
 app.get("/post/:id", getPostController);
 
-app.get("/posts/new", createPostController);
+app.get("/posts/new", auth, createPostController);
 
-app.post("/posts/store", storePostController);
+app.post("/posts/store", auth, storePostController);
 
 app.get("/user/register", registerController);
 

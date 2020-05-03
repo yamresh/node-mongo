@@ -7,16 +7,22 @@ module.exports = (req, res) => {
       ...req.body,
     },
     async (err, user) => {
-      const users = await User.find({});
-      console.log(user, " ======= User Created ===============\n", users);
-
       if (err) {
-        console.log("Error in saving data", err);
-        res.statusCode = 400;
-
-        return res.json({ error: err });
+        const errList = Object.keys(err.errors).map((key) => {
+          // const path = err.errors[key].path;
+          return err.errors[key].message;
+          /* return {
+            [path]: errMessage,
+          }; */
+        });
+        console.log("Error in saving data", errList);
+        req.session.errorRegisterList = errList;
+        // res.statusCode = 400;
+        res.redirect("/user/login");
+        //  return res.json({ error: errList });
+      } else {
+        res.redirect("/");
       }
-      res.redirect("/");
     }
   );
 };

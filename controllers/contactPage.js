@@ -1,3 +1,7 @@
 module.exports = (req, res) => {
-  res.render("contact");
+  if (req.session.userId) {
+    res.render("contact");
+  } else {
+    res.redirect("/user/login");
+  }
 };

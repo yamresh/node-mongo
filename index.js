@@ -7,7 +7,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const fileupload = require("express-fileupload");
 const morgan = require("morgan");
-
+const expressSession = require("express-session");
 const Post = require("./database/modals/Post");
 // Pages
 const validateDate = require("./middleware/validateDate");
@@ -19,6 +19,8 @@ const storePostController = require("./controllers/storePost");
 const getPostController = require("./controllers/getPost");
 const registerController = require("./controllers/registerPage");
 const storeUserController = require("./controllers/storeUser");
+const loginPageController = require("./controllers/loginPage");
+const loginUserController = require("./controllers/storeLogin");
 
 const app = express();
 const PORT = 3000;
@@ -30,6 +32,11 @@ app.use(bodyParser.json());
 app.use(fileupload());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set("views", `${__dirname}/views`);
+app.use(
+  expressSession({
+    secret: "secret",
+  })
+);
 mongoose.connect(mongooseString);
 
 // Logger
@@ -58,6 +65,10 @@ app.post("/posts/store", storePostController);
 app.get("/user/register", registerController);
 
 app.post("/user/register", storeUserController);
+
+app.get("/user/login", loginPageController);
+
+app.post("/user/login", loginUserController);
 
 app.listen(PORT, () => {
   console.log(`Server is running on PORT ${PORT}`);

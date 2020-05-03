@@ -8,14 +8,15 @@ module.exports = (req, res) => {
     },
     async (err, user) => {
       const users = await User.find({});
-      console.log(" ======= User Created ===============\n", users);
-      {
-        if (err) {
-          res.send(" there is some error in data saving");
-          res.statusCode = 400;
-        }
-        res.redirect("/");
+      console.log(user, " ======= User Created ===============\n", users);
+
+      if (err) {
+        console.log("Error in saving data", err);
+        res.statusCode = 400;
+
+        return res.json({ error: err });
       }
+      res.redirect("/");
     }
   );
 };

@@ -18,7 +18,7 @@ module.exports = (req, res) => {
         console.log("Error in saving data", errList);
         req.flash("errorRegisterList", errList);
         // res.statusCode = 400;
-        res.redirect("/user/login");
+        res.redirect("/user/register");
         //  return res.json({ error: errList });
       } else {
         res.redirect("/");

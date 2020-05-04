@@ -1,6 +1,4 @@
 module.exports = (req, res) => {
-  const errList = req.flash("errorRegisterList");
-  res.render("login", {
-    errors: errList,
-  });
+  console.log("Login request");
+  res.render("login");
 };

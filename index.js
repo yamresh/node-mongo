@@ -10,6 +10,7 @@ const morgan = require("morgan");
 const expressSession = require("express-session");
 const connectMongo = require("connect-mongo");
 const connectFlash = require("connect-flash");
+const edge = require("edge.js");
 const Post = require("./database/modals/Post");
 
 // Pages
@@ -26,6 +27,7 @@ const loginPageController = require("./controllers/loginPage");
 const loginUserController = require("./controllers/storeLogin");
 
 const auth = require("./middleware/auth");
+const redirectIfLoggedin = require("./middleware/redirectIfLoggedin");
 
 const app = express();
 const PORT = 3000;
@@ -39,7 +41,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.set("views", `${__dirname}/views`);
 const mongoStore = connectMongo(expressSession);
 mongoose.connect(mongooseString, () => {
-  console.log("========== Connected to Mongo db server");
+  console.log("========== Connected to Mongo db server ============");
 });
 
 app.use(
@@ -52,6 +54,15 @@ app.use(
 );
 
 app.use(connectFlash());
+app.use("/", (req, res, next) => {
+  console.log(" req.session ", req.session);
+  if (req.session && req.session.userId) {
+    edge.global("auth", req.session.userId);
+  }
+  edge.global("count", "1");
+
+  next();
+});
 // Logger
 // create a write stream (in append mode)
 var accessLogStream = fs.createWriteStream(path.join(__dirname, "access.log"), {
@@ -77,11 +88,11 @@ app.post("/posts/store", auth, storePostController);
 
 app.get("/user/register", registerController);
 
-app.post("/user/register", storeUserController);
+app.post("/user/register", redirectIfLoggedin, storeUserController);
 
 app.get("/user/login", loginPageController);
 
-app.post("/user/login", loginUserController);
+app.post("/user/login", redirectIfLoggedin, loginUserController);
 
 app.listen(PORT, () => {
   console.log(`Server is running on PORT ${PORT}`);

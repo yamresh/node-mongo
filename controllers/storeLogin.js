@@ -8,11 +8,10 @@ module.exports = (req, res) => {
     if (user) {
       req.session.userId = user._id;
       bcrypt.compare(password, user.password, (err, result) => {
-        console.log(" Error in store Login ", err.errors);
-        console.log(" result ", result);
+        if (err) {
+          console.log(" Error in store Login ", err.errors);
+        }
         if (result) {
-          console.log(" result 1", result);
-
           return res.redirect("/");
         }
       });

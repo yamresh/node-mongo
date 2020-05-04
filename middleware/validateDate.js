@@ -5,7 +5,14 @@ const validateDate = (req, res, next) => {
     !req.body.title ||
     !req.body.description ||
     !req.body.content;
-  console.log("validateDate -- > ", isValid);
+  console.log(
+    "validateDate -- > ",
+    !req.files,
+    !req.body.username,
+    !req.body.title,
+    !req.body.description,
+    !req.body.content
+  );
 
   if (isValid) {
     return res.redirect("/posts/new");

@@ -42,7 +42,7 @@
                 <div class="control-group">
                     <div class="form-group floating-label-form-group controls">
                         <label>Content</label>
-                        <textarea name="content" placeholder="Content ..." cols="30" rows="10" class="form-control"> </textarea>
+                        <textarea id="summernote" name="content" placeholder="Content ..." cols="30" rows="10" class="form-control"> </textarea>
                     </div>
                 </div>
                 <div class="control-group mt-4">
@@ -60,3 +60,24 @@
   </div>
   
   @endsection
+
+  @section('styles')
+<!-- include summernote css/js -->
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.16/dist/summernote.min.css" rel="stylesheet">
+
+@endsection
+
+
+@section('scripts')
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.16/dist/summernote.min.js"></script>
+
+<script>
+
+$('#summernote').summernote({
+  height: 300,                 // set editor height
+  minHeight: null,             // set minimum height of editor
+  maxHeight: null,             // set maximum height of editor
+  focus: true                  // set focus to editable area after initializing summernote
+});
+  </script>
+@endsection

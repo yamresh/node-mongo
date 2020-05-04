@@ -25,7 +25,7 @@ const registerController = require("./controllers/registerPage");
 const storeUserController = require("./controllers/storeUser");
 const loginPageController = require("./controllers/loginPage");
 const loginUserController = require("./controllers/storeLogin");
-
+const logoutPageController = require("./controllers/logoutPageController");
 const auth = require("./middleware/auth");
 const redirectIfLoggedin = require("./middleware/redirectIfLoggedin");
 
@@ -55,11 +55,10 @@ app.use(
 
 app.use(connectFlash());
 app.use("/", (req, res, next) => {
-  console.log(" req.session ", req.session);
+  console.log(" req.session.userId ", req.session.userId);
   if (req.session && req.session.userId) {
     edge.global("auth", req.session.userId);
   }
-  edge.global("count", "1");
 
   next();
 });
@@ -93,6 +92,10 @@ app.post("/user/register", redirectIfLoggedin, storeUserController);
 app.get("/user/login", loginPageController);
 
 app.post("/user/login", redirectIfLoggedin, loginUserController);
+
+app.get("/user/logout", logoutPageController);
+
+app.use((req, res) => res.render("404"));
 
 app.listen(PORT, () => {
   console.log(`Server is running on PORT ${PORT}`);

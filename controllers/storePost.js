@@ -9,13 +9,16 @@ module.exports = (req, res) => {
       {
         ...req.body,
         image: `/posts/${image.name}`,
+        author: req.session.userId,
       },
       (err, post) => {
         if (err) {
+          console.log(" err in store post ", err);
           res.send(" there is some error in data saving");
           res.statusCode = 400;
+        } else {
+          res.redirect("/");
         }
-        res.redirect("/");
       }
     );
   });

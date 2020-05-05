@@ -1,14 +1,9 @@
 const validateDate = (req, res, next) => {
   const isValid =
-    !req.files ||
-    !req.body.username ||
-    !req.body.title ||
-    !req.body.description ||
-    !req.body.content;
+    !req.files || !req.body.title || !req.body.description || !req.body.content;
   console.log(
     "validateDate -- > ",
     !req.files,
-    !req.body.username,
     !req.body.title,
     !req.body.description,
     !req.body.content

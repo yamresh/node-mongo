@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const { config, engine } = require("express-edge");
 const path = require("path");
@@ -11,6 +12,7 @@ const expressSession = require("express-session");
 const connectMongo = require("connect-mongo");
 const connectFlash = require("connect-flash");
 const edge = require("edge.js");
+const cloudinary = require("cloudinary");
 const Post = require("./database/modals/Post");
 
 // Pages
@@ -30,9 +32,8 @@ const auth = require("./middleware/auth");
 const redirectIfLoggedin = require("./middleware/redirectIfLoggedin");
 
 const app = express();
-const PORT = 3000;
-const mongooseString =
-  "mongodb+srv://nikki:nikki@cluster0-dbsge.gcp.mongodb.net/test?retryWrites=true&w=majority";
+const PORT = process.env.PORT;
+const mongooseString = process.env.MONGO_URI;
 app.use(express.static("public"));
 app.use(engine);
 app.use(bodyParser.json());
@@ -44,9 +45,15 @@ mongoose.connect(mongooseString, () => {
   console.log("========== Connected to Mongo db server ============");
 });
 
+cloudinary.config({
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+});
+
 app.use(
   expressSession({
-    secret: "secret",
+    secret: process.env.EXPRESS_SESSION_KEY,
     store: new mongoStore({
       mongooseConnection: mongoose.connection,
     }),
